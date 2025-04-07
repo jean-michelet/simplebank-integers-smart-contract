@@ -2,7 +2,8 @@
 node_modules/
 
 # Hardhat / Foundry build files
-artifacts/
+tests/artifacts/
+contracts/artifacts/
 cache/
 out/
 
