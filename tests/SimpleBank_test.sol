@@ -2,7 +2,6 @@
         
 pragma solidity >=0.4.22 <0.9.0;
 
-// This import is automatically injected by Remix
 import "remix_tests.sol"; 
 
 import "../contracts/SimpleBank.sol";
@@ -11,7 +10,6 @@ import "./TestUser.sol";
 contract SimpleBankTest {
     SimpleBank bank;
 
-    /// Run before each test
     function beforeEach() public {
         bank = new SimpleBank();
     }
@@ -44,6 +42,18 @@ contract SimpleBankTest {
         }
     }
 
+    function testDepositeUsersIsolation() public {
+        bank.deposit(50); // msg.sender (user1)
+        Assert.equal(bank.getBalance(), 50, "User1 should have 50");
+
+        // Simulate user2 using proxy contract
+        TestUser user2 = new TestUser();
+        user2.depositToBank(bank, 30);
+
+        Assert.equal(user2.getBalanceFromBank(bank), 30, "User2 should have 30");
+        Assert.equal(bank.getBalance(), 50, "User1 balance should still be 50");
+    }
+
     function testValidWithdraw() public {
         bank.deposit(100);
 
@@ -71,22 +81,22 @@ contract SimpleBankTest {
         }
     }
 
+    function testWithdrawTUsersIsolation() public {
+        bank.deposit(50); // msg.sender (user1)
+
+        // Simulate user2 using proxy contract
+        TestUser user2 = new TestUser();
+        user2.depositToBank(bank, 50);
+        user2.withdrawFromBank(bank, 10);
+
+        Assert.equal(bank.getBalance(), 50, "User1 should still have 50");
+        Assert.equal(user2.getBalanceFromBank(bank), 40, "User2 should have 40");
+    }
+
     function testWithdrawFullBalance() public {
         bank.deposit(50);
         Assert.equal(bank.getBalance(), 50, "Balance should be 50 before withdrawal");
         bank.withdraw(50);
         Assert.equal(bank.getBalance(), 0, "Balance should be zero after full withdrawal");
-    }
-
-    function testMultipleUsersIsolation() public {
-        bank.deposit(50); // msg.sender (user1)
-        Assert.equal(bank.getBalance(), 50, "User1 should have 50");
-
-        // Simulate user2 using proxy contract
-        TestUser user2 = new TestUser();
-        user2.depositToBank(bank, 30);
-
-        Assert.equal(user2.getBalanceFromBank(bank), 30, "User2 should have 30");
-        Assert.equal(bank.getBalance(), 50, "User1 balance should still be 50");
     }
 }
