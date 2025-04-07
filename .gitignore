@@ -1,0 +1,41 @@
+# Node modules
+node_modules/
+
+# Hardhat / Foundry build files
+artifacts/
+cache/
+out/
+
+# Local environment files
+.env
+.env.local
+
+# VSCode and IDE-specific
+.vscode/
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Git-related
+*.swp
+*.swo
+
+# Dependencies and state
+.deps/
+.states/
+
+# Coverage and test outputs
+coverage/
+coverage.json
+
+# Generated files
+typechain/
+typechain-types/
+
+# Ignore compiled contracts (optional, if you rebuild often)
+*.json
+
+# Misc
+*.tsbuildinfo
